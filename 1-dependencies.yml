@@ -5,15 +5,20 @@
 - name: Kubernetes Dependencies
   hosts: all
   become: true
+
   tasks:
     - name: Updates
       apt:
         name: "*"
         state: latest
         update_cache: true
+    # reboots are an issue
+    # - name: Reboot
+    #   shell: reboot
 
-    - name: Reboot
-      reboot:
+    - name: Pause for 5 minutes to build app cache
+      ansible.builtin.pause:
+        minutes: 5
 
     - name: Disable SWAP
       shell: |
@@ -115,13 +120,13 @@
 
     - name: Install Kubelet
       apt:
-        name: kubelet=1.29.*
+        name: kubelet
         state: present
         update_cache: true
 
     - name: Install Kubeadm
       apt:
-        name: kubeadm=1.29.*
+        name: kubeadm
         state: present
 
     - name: Enable the Kubelet service
@@ -143,16 +148,7 @@
       sysctl:
         name: net.ipv4.ip_forward
         value: 1
-
-    - name: Reboot
-      reboot:
-
-- hosts: master
-  become: true
-  tasks:
-    - name: Install Kubectl
-      apt:
-        name: kubectl
-        state: present
-        force: yes
+    # reboots are an issue
+    # - name: Reboot
+    #   shell: reboot
 ...

@@ -2,6 +2,15 @@
 - hosts: master
   become: true
   tasks:
+    - name: Updates
+      apt:
+        update_cache: true
+    # kubectl not being found
+    - name: Install Kubectl
+      apt:
+        name: kubectl
+        state: present
+        force: yes
     - name: Create an Empty file for Kubeadm configuring
       copy:
         content: ""
